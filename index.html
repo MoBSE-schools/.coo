@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gambia Agriculture Extension Workers</title>
+<meta name="description" content="Gambia Agric Extension Workers Directory: Regions, Districts, Branches, Extension Workers, Nationwide dashboard & statistics" />
+<style>
+  :root{
+    --bg:#0f1724;
+    --card:#0b1220;
+    --muted:#9aa4b2;
+    --gold:#d4af37;
+    --silver:#c0c6cc;
+    --diamond:#bfe9ff;
+    --glass:rgba(255,255,255,0.04);
+    --radius:12px;
+    --maxw:1400px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1000px 360px at 8% 8%, rgba(212,175,55,0.06), transparent),
+      radial-gradient(900px 280px at 92% 88%, rgba(191,233,255,0.03), transparent),
+      var(--bg);
+    color:#e6eef6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:2rem 1rem;
+  }
+  .layout{max-width:var(--maxw);margin:0 auto;}
+  header{display:flex;align-items:center;gap:1rem;justify-content:space-between;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:1rem;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:.6rem 1rem;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#ffd27f 40%,var(--diamond));display:grid;place-items:center;color:#08101a;font-weight:800;font-size:20px}
+  h1{margin:0;font-size:1.25rem;line-height:1;color:var(--gold)}
+  .lead{color:var(--muted);font-size:.95rem}
+  .controls{display:flex;gap:.6rem;margin-top:.75rem;align-items:center;flex-wrap:wrap}
+  .search{flex:1;display:flex;align-items:center;background:var(--glass);padding:.45rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .search input{background:transparent;border:0;color:inherit;padding:.45rem .6rem;outline:none;font-size:0.95rem}
+  .btn{background:linear-gradient(90deg,var(--gold),#ffd27f);color:#08101a;padding:.5rem .9rem;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  main{display:grid;grid-template-columns:320px 1fr;gap:1rem;margin-top:1rem}
+  aside{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:1rem;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:68vh;overflow:auto}
+  .region-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem}
+  .region-item{padding:.6rem;border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border:1px solid transparent}
+  .region-item:hover{background:rgba(255,255,255,0.02)}
+  .region-item.active{background:linear-gradient(90deg,rgba(212,175,55,0.06),rgba(191,233,255,0.02));border-color:rgba(212,175,55,0.08)}
+  .content{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:1rem;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:68vh;overflow:auto}
+  .district{background:rgba(255,255,255,0.01);padding:.8rem;border-radius:12px;margin-bottom:1rem;border:1px solid rgba(255,255,255,0.02)}
+  .branches-grid{display:flex;flex-direction:column;gap:.6rem;margin-top:.6rem}
+  .branch{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:.6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .branch h4{margin:0 0 .45rem 0;font-size:0.95rem}
+  .section-row{display:flex;gap:.6rem;flex-wrap:wrap}
+  .section{flex:1;min-width:220px;background:rgba(255,255,255,0.01);padding:.5rem;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .worker{display:flex;gap:.6rem;align-items:center;padding:.45rem;border-radius:10px;margin-bottom:.45rem;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
+  .avatar-wrap{width:56px;height:56px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(180deg,var(--silver),rgba(255,255,255,0.06))}
+  .avatar{display:block;width:48px;height:48px;border-radius:8px;object-fit:cover}
+  .initials{font-weight:700;color:#08101a}
+  .tinfo{flex:1}
+  .tinfo b{display:block}
+  .tmeta{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+  footer{margin-top:1rem;color:var(--muted);font-size:.9rem;text-align:center}
+  select{background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:inherit;padding:.5rem;border-radius:10px}
+  .dashboard{display:grid;grid-template-columns:1fr 320px;gap:1rem;margin-bottom:1rem}
+  .dash-card{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:1rem;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .stat-row{display:flex;gap:.6rem;flex-wrap:wrap}
+  .stat{flex:1;min-width:160px;background:rgba(255,255,255,0.02);padding:.6rem;border-radius:10px;text-align:center}
+  .stat h3{margin:0;color:var(--gold)}
+  .region-summary{display:flex;flex-direction:column;gap:.4rem;margin-top:.6rem}
+  .region-line{display:flex;justify-content:space-between;align-items:center;padding:.4rem;border-radius:8px;background:rgba(255,255,255,0.01)}
+  .tabs{display:flex;gap:.6rem;margin-bottom:.6rem}
+  .tab-btn{flex:1;padding:.5rem;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;cursor:pointer}
+  .tab-btn.active{background:linear-gradient(90deg,var(--gold),#ffd27f);color:#08101a;font-weight:700}
+  .stats-table{width:100%;border-collapse:collapse;margin-top:.6rem}
+  .stats-table th,.stats-table td{padding:.6rem;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+  .small-muted{color:var(--muted);font-size:.9rem}
+  @media (max-width:980px){main{grid-template-columns:1fr} .dashboard{grid-template-columns:1fr} .controls{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <header>
+      <div class="brand">
+        <div class="logo">GM</div>
+        <div>
+          <h1>Gambia Agriculture Extension Workers</h1>
+          <div class="lead">Regions → Districts → Branches → Extension Workers — (Demo work in progress by Lamin Ceesay @ 3491934)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center">
+        <button class="btn" id="viewStatsTop">View Statistics</button>
+        <button class="btn">Admin</button>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" style="opacity:.85;margin-right:.4rem"><path d="M21 21l-4.35-4.35" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11.5" cy="11.5" r="5.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><input id="searchInput" placeholder="Search workers, branches, districts, regions" /></div>
+      <select id="regionFilter"><option value="">All Regions</option></select>
+      <select id="districtFilter"><option value="">All Districts</option></select>
+      <select id="branchFilter"><option value="">All Agric Extension Offices</option></select>
+      <button class="btn" id="clearBtn">Clear</button>
+    </div>
+
+    <main>
+      <aside>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+          <h4 style="color:var(--gold);margin:0">Regions</h4>
+          <div class="small-muted">Toggle</div>
+        </div>
+        <div class="tabs" style="margin-bottom:.6rem">
+          <button class="tab-btn active" id="tabRegions">Regions</button>
+          <button class="tab-btn" id="tabStats">Statistics</button>
+        </div>
+        <ul class="region-list" id="regionList"></ul>
+      </aside>
+
+      <section class="content" id="contentArea">
+        <!-- Dashboard (top) + Region list injected here -->
+      </section>
+    </main>
+
+    <footer>editing in progress — data autogenerated for demo purposes.</footer>
+  </div>
+
+
+<script>
+// Gambia Teachers Directory - autogenerated dataset and rendering
+// Converted from the Agriculture extension demo by Lamin Ceesay
+// Changes: Regions/Districts/Villages from user's list; each village has 3 schools (Primary/Junior/Senior)
+// Each district therefore has 5 Primary, 5 Junior, 5 Senior (15 schools total). Small sample teachers added.
+
+// Simple name pools (kept from original demo)
+const maleFirst = ['Lamin','Ebrima','Papa','Ousman','Alieu','Sainey','Kebba','Musa','Samba','Momodou','Yaw','Abdou','Modou','Abu','Said','Baba','Njie','Pa','Sillah','Jobe','Sarr','Tamba','Jawo','Fafa','Mballow','Nyassi','Jatta','Ceesay','Faal','Darboe','Touray','Bah','Cham','Sanyang','Camara','Kante','Jallow'];
+const femaleFirst = ['Fatou','Aminata','Isatou','Aja','Binta','Saffie','Hawa','Mariama','Salma','Kaddy','Adama','Awa','Mariya','Yawda','Ndey','Gambetta','Zainab','Kumba','Ramatoulie','Yassin','Isatu','Fatima','Halima','Maimuna','Sukina','Sitta','Fanta','Rokia','Nadine','Aissatou','Sona','Dieyna','Madi','Sena','Isha','Aria'];
+const surnames = ['Ceesay','Jallow','Bojang','Touray','Sanyang','Gomez','Jatta','Faal','Jammeh','Cham','Colley','Bah','Sanneh','Lowe','Darboe','Sonko','Jarju','Njie','Trawally','Sillah','Jobe','Sarr','Tamba','Jawo','Mballow','Nyassi','Camara','Kante','Sowe','Fofana','Senghore','Kinteh','Manneh','Kane','Kebbeh','Mbye'];
+
+function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]] } return b; }
+const maleIdx = shuffle([...Array(maleFirst.length).keys()]);
+const femaleIdx = shuffle([...Array(femaleFirst.length).keys()]);
+const surnameIdx = shuffle([...Array(surnames.length).keys()]);
+let nameCounter = 0;
+const usedNames = new Set();
+function getUniqueName(gender){
+  const pool = gender === 'Male' ? maleFirst : femaleFirst;
+  const max = pool.length * surnames.length;
+  for(let i=0;i<max;i++){
+    const p = pool[(nameCounter + i) % pool.length];
+    const s = surnames[(Math.floor((nameCounter + i)/pool.length)) % surnames.length];
+    const full = p + ' ' + s;
+    if(!usedNames.has(full)){ usedNames.add(full); nameCounter++; return full; }
+  }
+  nameCounter++;
+  return (gender==='Male'?'Modou ':'Awa ') + 'Unknown' + nameCounter;
+}
+
+// User-provided regions/districts/villages (trimmed/normalized)
+const regionsInput = [
+  {
+    name: "BASSE LGA (Upper River Region)",
+    districts: [
+      { district: "Wuli East", villages: ["Bantunding","Wellingara Yare","Sare Ngai Sillah","Barrow Kunda East","Koli Kunda"] },
+      { district: "Wuli West", villages: ["Sare Ngai","Sare Gayo","Barrow Kunda","Yoro Jelal","Sare Pateh"] },
+      { district: "Jimara", villages: ["Kaiaf","Sare Alpha","Koina","Fula Bantang","Sare Soffie"] },
+      { district: "Kantora", villages: ["Garawol","Nema","Sare Jor","Kundam Jawo","Sare Musa"] },
+      { district: "Sandu", villages: ["Diabugu Batapa","Sare Sillay","Bajonkoto","Koba Kunda","Jula Kunda"] },
+      { district: "Tumana", villages: ["Sutukoba","Kundam Demba","Barajally Tenda","Bani","Bajakunda"] },
+      { district: "Fulladu East", villages: ["Basse Santa Su","Manneh Kunda","Demba Kunda","Sare Pateh","Kaba Kama"] }
+    ]
+  },
+  {
+    name: "JANJANBUREH LGA (Central River Region South)",
+    districts: [
+      { district: "Niamina East", villages: ["Sapu","Kudang","Missira","Jarreng","Kunting"] },
+      { district: "Niamina West", villages: ["Dankunku","Kerr Sering","Bambako","Sare Jallow","Jimbala"] },
+      { district: "Niamina Dankunku", villages: ["Dankunku Village","Sare Bambo","Jimbala Kunda","Kerr Wally","Simbara"] },
+      { district: "Janjanbureh (Island)", villages: ["Janjanbureh Town","Lamin Koto","Georgetown Camp","Sankulay Kunda","Kosema"] },
+      { district: "Fulladu West", villages: ["Bansang","Kunting","Tuba Dampu","Bale","Sare Jawo"] }
+    ]
+  },
+  {
+    name: "KUNTAUR LGA (Central River Region North)",
+    districts: [
+      { district: "Lower Saloum", villages: ["Kaur","Karantaba","Simbara","Bantanto","Balanghar"] },
+      { district: "Upper Saloum", villages: ["Njau","Kaur Wollof","Jahally","Sare Nduwa","Njoben"] },
+      { district: "Niani", villages: ["Wassu","Karantaba Niani","Kuntaur Fulla Kunda","Bakadaji","Choya"] },
+      { district: "Nianija", villages: ["Panchang","Sinchu Baya","Dankunku Fula Kunda","Simbara Fula Kunda","Nianija Kunda"] },
+      { district: "Sami", villages: ["Kerr Ardo","Chamen Jalal Kunda","Njaw","Ker Alpha","Balal Kunda"] }
+    ]
+  },
+  {
+    name: "MANSOKONKO LGA (Lower River Region)",
+    districts: [
+      { district: "Jarra East", villages: ["Bureng","Dasilameh","Dongoroba","Fellenkoto","Karantaba Jarreng"] },
+      { district: "Jarra Central", villages: ["Soma","Pakaliba","Mansakonko","Jenoi","Jiffarong"] },
+      { district: "Jarra West", villages: ["Sare Saidy","Fonkoi Kunda","Karantaba Jarra","Sankwia Jarra","Sankandi"] },
+      { district: "Kiang East", villages: ["Kaiaf","Kwinella","Jattaba","Madina Angalleh","Tabanding"] },
+      { district: "Kiang Central", villages: ["Dumbuto","Jifarong","Manduar (Kiang)","Joli","Kataba"] },
+      { district: "Kiang West", villages: ["Tendaba","Tankular","Sankwia","Keneba","Jola Kunda"] }
+    ]
+  },
+  {
+    name: "KEREWAN LGA (North Bank Region)",
+    districts: [
+      { district: "Lower Niumi", villages: ["Barra","Essau","Albreda","Kanuma","Jinack Kajata"] },
+      { district: "Upper Niumi", villages: ["Bakindik","Kerr Devili","Sika","Lamin Niumi","Buniadu"] },
+      { district: "Jokadu", villages: ["Medina Sambujang","Bakang Wollof","Bakang Fula Kunda","Kerr Pateh","Kinteh Kunda"] },
+      { district: "Lower Baddibu", villages: ["Kerewan","Salikene","Illiasa","Ngayen","Banni"] },
+      { district: "Central Baddibu", villages: ["Farafenni","Dumbo","Njaba Kunda","Saruja","Chamen"] },
+      { district: "Sabach Sanjal", villages: ["Njawara","Sanjal","Sara Kunda","Kuntaya","Kerr Jarga"] },
+      { district: "Illiassa / Upper Baddibu", villages: ["Illiasa","Salikenni","Njawara","Sami Kuta","Mandori"] }
+    ]
+  },
+  {
+    name: "BRIKAMA LGA (West Coast Region)",
+    districts: [
+      { district: "Kombo South", villages: ["Sanyang","Gunjur","Tanji","Kartong","Jambanjelly"] },
+      { district: "Kombo Central", villages: ["Brikama Nema","Kassa Kunda","Marakissa","Kubuneh","Manduar (Kombo)"] },
+      { district: "Kombo East", villages: ["Faraba Banta","Kuloro","Mandinaba","Pirang","Kafuta"] },
+      { district: "Kombo North / St. Mary", villages: ["Sukuta","Wellingara","Bakoteh","Manjai Kunda","New Yundum"] },
+      { district: "Foni Bintang-Karenai", villages: ["Bintang","Sibanor","Kanfenda","Ndemban","Katakorr"] },
+      { district: "Foni Bondali", villages: ["Bondali Tenda","Besse","Bulock","Kanlaji","Sangajorr"] },
+      { district: "Foni Brefet", villages: ["Brefet","Kafuta","Nyofelleh","Manduar Foni","Kampant Foni"] },
+      { district: "Foni Jarrol", villages: ["Jarrol","Somita","Kandonk","Njongon","Bwiam"] },
+      { district: "Foni Kansala", villages: ["Bwiam","Kampant","Foni Bwaim","Kanfenda Kunda","Kanlaji"] }
+    ]
+  },
+  {
+    name: "BANJUL & KANIFING LGAs (Urban Areas)",
+    districts: [
+      { district: "Banjul Central", villages: ["Half-Die","Campama","Crab Island","New Town","Booreng"] },
+      { district: "Banjul North", villages: ["Soldier Town","Tobacco Road","Buckle Street","Box Bar","Portuguese Town"] },
+      { district: "Banjul South", villages: ["Hagan Street","Perseverance Street","Lasso Wharf","Anglesea","Cotton Street"] },
+      { district: "Kanifing", villages: ["Serekunda","Bakau","Fajara","Latrikunda Sabiji","Bundung"] }
+    ]
+  }
+];
+
+// Build fullData array used by the UI. For each district, create 15 branches (3 per village)
+const fullData = [];
+let tinCounter = 100000;
+let idCounter = 200000;
+function genTIN(){ tinCounter++; return 'TIN-' + String(tinCounter).padStart(6,'0'); }
+function genID(){ idCounter++; return 'GMBID-' + String(idCounter).padStart(6,'0'); }
+
+regionsInput.forEach(regionItem => {
+  const regionObj = { region: regionItem.name, districts: [] };
+  regionItem.districts.forEach(dItem => {
+    const districtObj = { district: dItem.district, branches: [] };
+    dItem.villages.forEach(v => {
+      // For each village create three branches (schools): Primary, Junior, Senior
+      const types = ['Primary School','Junior School','Senior School'];
+      types.forEach(t => {
+        const schoolName = `${v} ${t}`;
+        // generate 4 sample teachers for each school (2 male, 2 female) as demo workers
+        const teachers = [];
+        for(let k=0;k<4;k++){
+          const gender = k % 2 === 0 ? 'Male' : 'Female';
+          const name = getUniqueName(gender);
+          teachers.push({
+            name,
+            initials: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),
+            gender,
+            tin: genTIN(),
+            idNo: genID(),
+            role: k===0 ? 'Head Teacher' : (k===1 ? 'Deputy' : 'Teacher'),
+            experience: Math.floor(Math.random()*15)+1,
+            photo: `https://via.placeholder.com/120/ffffff/08101a?text=${encodeURIComponent(name.split(' ')[0].slice(0,2).toUpperCase())}`
+          });
+        }
+        districtObj.branches.push({ branch: schoolName, workers: teachers });
+      });
+    });
+    regionObj.districts.push(districtObj);
+  });
+  fullData.push(regionObj);
+});
+
+// --- UI rendering logic (kept simple and similar to original) ---
+const regionListEl = document.getElementById('regionList');
+const regionFilter = document.getElementById('regionFilter');
+const districtFilter = document.getElementById('districtFilter');
+const branchFilter = document.getElementById('branchFilter');
+const searchInput = document.getElementById('searchInput');
+const contentArea = document.getElementById('contentArea');
+const viewStatsTop = document.getElementById('viewStatsTop');
+const clearBtn = document.getElementById('clearBtn');
+const tabRegions = document.getElementById('tabRegions');
+const tabStats = document.getElementById('tabStats');
+
+// populate region dropdown & left list
+function populateRegions(){
+  regionFilter.innerHTML = '<option value="">All Regions</option>';
+  regionListEl.innerHTML = '';
+  fullData.forEach((r, idx) => {
+    const opt = document.createElement('option'); opt.value = r.region; opt.textContent = r.region;
+    regionFilter.appendChild(opt);
+    const li = document.createElement('li'); li.className='region-item'; li.textContent = r.region;
+    li.addEventListener('click', ()=>{ selectRegion(r.region); });
+    regionListEl.appendChild(li);
+  });
+}
+function selectRegion(name){
+  const r = fullData.find(x=>x.region===name);
+  renderRegion(r);
+  highlightRegion(name);
+}
+function highlightRegion(name){
+  Array.from(regionListEl.children).forEach(li=> li.classList.toggle('active', li.textContent===name));
+}
+
+// populate district and branch filters based on selection
+function populateFilters(regionName){
+  districtFilter.innerHTML = '<option value="">All Districts</option>';
+  branchFilter.innerHTML = '<option value="">All Schools</option>';
+  const region = fullData.find(r=>!regionName || r.region===regionName) || fullData[0];
+  const districts = region.districts;
+  districts.forEach(d=>{
+    const opt = document.createElement('option'); opt.value = d.district; opt.textContent = d.district; districtFilter.appendChild(opt);
+    // branches (schools)
+    d.branches.forEach(b=>{
+      const optb = document.createElement('option'); optb.value = b.branch; optb.textContent = b.branch; branchFilter.appendChild(optb);
+    });
+  });
+}
+
+// render a selected region (or all if null)
+function renderRegion(region){
+  contentArea.innerHTML = '';
+  // dashboard top
+  const dash = document.createElement('div'); dash.className='dashboard';
+  const dc = document.createElement('div'); dc.className='dash-card';
+  const stats = document.createElement('div'); stats.className='stat-row';
+  const totalRegions = fullData.length;
+  const totalDistricts = fullData.reduce((s,r)=>s + r.districts.length,0);
+  const totalSchools = fullData.reduce((s,r)=> s + r.districts.reduce((sd,d)=> sd + d.branches.length,0),0);
+  const s1 = document.createElement('div'); s1.className='stat'; s1.innerHTML = `<h3>${totalRegions}</h3><div class="small-muted">Regions</div>`;
+  const s2 = document.createElement('div'); s2.className='stat'; s2.innerHTML = `<h3>${totalDistricts}</h3><div class="small-muted">Districts</div>`;
+  const s3 = document.createElement('div'); s3.className='stat'; s3.innerHTML = `<h3>${totalSchools}</h3><div class="small-muted">Schools</div>`;
+  stats.appendChild(s1); stats.appendChild(s2); stats.appendChild(s3);
+  dc.appendChild(stats);
+  dash.appendChild(dc);
+  contentArea.appendChild(dash);
+
+  // show region header
+  const header = document.createElement('h2'); header.style.color='var(--gold)'; header.textContent = region ? region.region : 'All Regions';
+  contentArea.appendChild(header);
+
+  // show districts
+  const container = document.createElement('div');
+  (region ? [region] : fullData).forEach(r=>{
+    r.districts.forEach(d=>{
+      const dEl = document.createElement('div'); dEl.className='district';
+      const dTitle = document.createElement('h3'); dTitle.textContent = d.district; dEl.appendChild(dTitle);
+      // branches grid
+      const grid = document.createElement('div'); grid.className='branches-grid';
+      d.branches.forEach(b=>{
+        const bEl = document.createElement('div'); bEl.className='branch';
+        const h4 = document.createElement('h4'); h4.textContent = b.branch; bEl.appendChild(h4);
+        // list teachers
+        const list = document.createElement('div'); list.className='section-row';
+        const sec = document.createElement('div'); sec.className='section';
+        b.workers.forEach(w=>{
+          const wEl = document.createElement('div'); wEl.className='worker';
+          const avWrap = document.createElement('div'); avWrap.className='avatar-wrap';
+          const img = document.createElement('img'); img.className='avatar'; img.src = w.photo;
+          avWrap.appendChild(img);
+          const info = document.createElement('div'); info.className='tinfo';
+          info.innerHTML = `<b>${w.name}</b><div class="tmeta">${w.role} • ${w.gender} • ${w.experience} yrs</div>`;
+          wEl.appendChild(avWrap); wEl.appendChild(info);
+          sec.appendChild(wEl);
+        });
+        list.appendChild(sec); bEl.appendChild(list); grid.appendChild(bEl);
+      });
+      dEl.appendChild(grid); container.appendChild(dEl);
+    });
+  });
+  contentArea.appendChild(container);
+}
+
+// --- initialisation ---
+populateRegions();
+populateFilters();
+renderRegion(null);
+
+// --- events ---
+regionFilter.addEventListener('change', ()=>{
+  const val = regionFilter.value;
+  populateFilters(val);
+  if(val) selectRegion(val); else renderRegion(null);
+});
+districtFilter.addEventListener('change', ()=>{
+  const rName = regionFilter.value;
+  const dName = districtFilter.value;
+  if(dName){
+    // find selected district and render only it
+    const region = fullData.find(r=> r.region===rName) || fullData[0];
+    const district = (region ? region.districts : fullData.flatMap(r=>r.districts)).find(d=> d.district === dName);
+    contentArea.innerHTML = '';
+    // render single district quickly
+    const header = document.createElement('h2'); header.style.color='var(--gold)'; header.textContent = district.district;
+    contentArea.appendChild(header);
+    const dEl = document.createElement('div'); dEl.className='district';
+    const grid = document.createElement('div'); grid.className='branches-grid';
+    district.branches.forEach(b=>{
+      const bEl = document.createElement('div'); bEl.className='branch';
+      const h4 = document.createElement('h4'); h4.textContent = b.branch; bEl.appendChild(h4);
+      const sec = document.createElement('div'); sec.className='section';
+      b.workers.forEach(w=>{
+        const wEl = document.createElement('div'); wEl.className='worker';
+        const avWrap = document.createElement('div'); avWrap.className='avatar-wrap';
+        const img = document.createElement('img'); img.className='avatar'; img.src = w.photo;
+        avWrap.appendChild(img);
+        const info = document.createElement('div'); info.className='tinfo';
+        info.innerHTML = `<b>${w.name}</b><div class="tmeta">${w.role} • ${w.gender} • ${w.experience} yrs</div>`;
+        wEl.appendChild(avWrap); wEl.appendChild(info);
+        sec.appendChild(wEl);
+      });
+      bEl.appendChild(sec); grid.appendChild(bEl);
+    });
+    dEl.appendChild(grid); contentArea.appendChild(dEl);
+  } else {
+    renderRegion(regionFilter.value ? fullData.find(r=>r.region===regionFilter.value) : null);
+  }
+});
+
+branchFilter.addEventListener('change', ()=>{
+  const b = branchFilter.value;
+  if(!b){ renderRegion(regionFilter.value ? fullData.find(r=>r.region===regionFilter.value) : null); return; }
+  // find branch and render only it
+  let found=null;
+  for(const r of fullData){ for(const d of r.districts){ for(const br of d.branches){ if(br.branch===b){ found={r,d,br}; break;} } if(found) break;} if(found) break; }
+  if(found){
+    contentArea.innerHTML='';
+    const header = document.createElement('h2'); header.style.color='var(--gold)'; header.textContent = found.br.branch;
+    contentArea.appendChild(header);
+    const bEl = document.createElement('div'); bEl.className='branch';
+    const sec = document.createElement('div'); sec.className='section';
+    found.br.workers.forEach(w=>{
+      const wEl = document.createElement('div'); wEl.className='worker';
+      const avWrap = document.createElement('div'); avWrap.className='avatar-wrap';
+      const img = document.createElement('img'); img.className='avatar'; img.src = w.photo;
+      avWrap.appendChild(img);
+      const info = document.createElement('div'); info.className='tinfo';
+      info.innerHTML = `<b>${w.name}</b><div class="tmeta">${w.role} • ${w.gender} • ${w.experience} yrs</div>`;
+      wEl.appendChild(avWrap); wEl.appendChild(info);
+      sec.appendChild(wEl);
+    });
+    bEl.appendChild(sec); contentArea.appendChild(bEl);
+  }
+});
+
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.toLowerCase().trim();
+  if(!q){ renderRegion(regionFilter.value ? fullData.find(r=>r.region===regionFilter.value) : null); return; }
+  // search across regions/districts/branches/teachers
+  const matches = [];
+  fullData.forEach(r=>{
+    r.districts.forEach(d=>{
+      d.branches.forEach(b=>{
+        if(b.branch.toLowerCase().includes(q) || d.district.toLowerCase().includes(q) || r.region.toLowerCase().includes(q)){
+          matches.push({r,d,b}); return;
+        }
+        b.workers.forEach(w=>{ if(w.name.toLowerCase().includes(q)){ matches.push({r,d,b}); } });
+      });
+    });
+  });
+  // render matches (unique branches)
+  const unique = {};
+  matches.forEach(m=> unique[m.b.branch]=m.b );
+  contentArea.innerHTML='';
+  const header = document.createElement('h2'); header.style.color='var(--gold)'; header.textContent = `Search results for "${q}"`;
+  contentArea.appendChild(header);
+  Object.values(unique).forEach(b=>{
+    const bEl = document.createElement('div'); bEl.className='branch';
+    const h4 = document.createElement('h4'); h4.textContent = b.branch; bEl.appendChild(h4);
+    const sec = document.createElement('div'); sec.className='section';
+    b.workers.forEach(w=>{
+      const wEl = document.createElement('div'); wEl.className='worker';
+      const avWrap = document.createElement('div'); avWrap.className='avatar-wrap';
+      const img = document.createElement('img'); img.className='avatar'; img.src = w.photo;
+      avWrap.appendChild(img);
+      const info = document.createElement('div'); info.className='tinfo';
+      info.innerHTML = `<b>${w.name}</b><div class="tmeta">${w.role} • ${w.gender} • ${w.experience} yrs</div>`;
+      wEl.appendChild(avWrap); wEl.appendChild(info);
+      sec.appendChild(wEl);
+    });
+    bEl.appendChild(sec); contentArea.appendChild(bEl);
+  });
+});
+
+clearBtn.addEventListener('click', ()=>{
+  searchInput.value=''; regionFilter.value=''; districtFilter.value=''; branchFilter.value='';
+  populateFilters(); renderRegion(null);
+});
+
+viewStatsTop.addEventListener('click', ()=>{ alert('Simple stats: Regions:'+fullData.length+' | Districts:'+fullData.reduce((s,r)=>s+r.districts.length,0)); });
+
+tabRegions.addEventListener('click', ()=>{ tabRegions.classList.add('active'); tabStats.classList.remove('active'); renderRegion(null); });
+tabStats.addEventListener('click', ()=>{ tabStats.classList.add('active'); tabRegions.classList.remove('active'); showStats(); });
+
+function showStats(){
+  // basic stats view
+  contentArea.innerHTML='';
+  const header = document.createElement('h2'); header.style.color='var(--gold)'; header.textContent='Statistics Overview';
+  contentArea.appendChild(header);
+  const t = document.createElement('table'); t.className='stats-table';
+  t.innerHTML = `<thead><tr><th>Region</th><th>Districts</th><th>Schools</th></tr></thead><tbody>` +
+    fullData.map(r=>`<tr><td>${r.region}</td><td>${r.districts.length}</td><td>${r.districts.reduce((s,d)=>s+d.branches.length,0)}</td></tr>`).join('') +
+    `</tbody>`;
+  contentArea.appendChild(t);
+}
+
+// end of script
+</script>
+
+</body>
+</html>
+
